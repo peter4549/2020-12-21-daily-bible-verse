@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Books -->
+    <string-array name="books">
+        <item>창세기</item> <!-- 00 -->
+        <item>출애굽기</item>  <!-- 01 -->
+        <item>레위기</item>  <!-- 02 -->
+        <item>민수기</item>  <!-- 03 -->
+        <item>신명기</item>  <!-- 04 -->
+        <item>여호수아</item>  <!-- 05 -->
+        <item>사사기</item>  <!-- 06 -->
+        <item>롯기</item>  <!-- 07 -->
+        <item>사무엘상</item>  <!-- 08 -->
+        <item>사무엘하</item>  <!-- 09 -->
+        <item>열왕기상</item>  <!-- 10 -->
+        <item>열왕기하</item>  <!-- 11 -->
+        <item>역대상</item>  <!-- 12 -->
+        <item>역대하</item>  <!-- 13 -->
+        <item>에스라</item>  <!-- 14 -->
+        <item>느헤미야</item>  <!-- 15 -->
+        <item>에스더</item>  <!-- 16 -->
+        <item>욥기</item>  <!-- 17 -->
+        <item>시편</item>  <!-- 18 -->
+        <item>잠언</item>  <!-- 19 -->
+        <item>전도서</item>  <!-- 20 -->
+        <item>아가</item>  <!-- 21 -->
+        <item>이사야</item>  <!-- 22 -->
+        <item>예레미야</item>  <!-- 23 -->
+        <item>예레미야애가</item>  <!-- 24 -->
+        <item>에스겔</item>  <!-- 25 -->
+        <item>다니엘</item>  <!-- 26 -->
+        <item>호세아</item>  <!-- 27 -->
+        <item>요엘</item>  <!-- 28 -->
+        <item>아모스</item>  <!-- 29 -->
+        <item>오바댜</item>  <!-- 30 -->
+        <item>요나</item>  <!-- 31 -->
+        <item>미가</item>  <!-- 32 -->
+        <item>나훔</item>  <!-- 33 -->
+        <item>하박국</item>  <!-- 34 -->
+        <item>스바냐</item>  <!-- 35 -->
+        <item>학개</item>  <!-- 36 -->
+        <item>스가랴</item>  <!-- 37 -->
+        <item>말라기</item>  <!-- 38 -->
+        <item>마태복음</item>  <!-- 39 -->
+        <item>마가복음</item>  <!-- 40 -->
+        <item>누가복음</item>  <!-- 41 -->
+        <item>요한복음</item>  <!-- 42 -->
+        <item>사도행전</item>  <!-- 43 -->
+        <item>로마서</item>  <!-- 44 -->
+        <item>고린도전서</item>  <!-- 45 -->
+        <item>고린도후서</item>  <!-- 46 -->
+        <item>갈라디아서</item>  <!-- 47 -->
+        <item>에베소서</item>  <!-- 48 -->
+        <item>빌립보서</item>  <!-- 49 -->
+        <item>골로새서</item>  <!-- 50 -->
+        <item>데살로니가전서</item>  <!-- 51 -->
+        <item>데살로니가후서</item>  <!-- 52 -->
+        <item>디모데전서</item>  <!-- 53 -->
+        <item>디모데후서</item>  <!-- 54 -->
+        <item>디도서</item>  <!-- 55 -->
+        <item>빌레몬서</item>  <!-- 56 -->
+        <item>히브리서</item>  <!-- 57 -->
+        <item>야고보서</item>  <!-- 58 -->
+        <item>베드로전서</item>  <!-- 59 -->
+        <item>베드로후서</item>  <!-- 60 -->
+        <item>요한일서</item>  <!-- 61 -->
+        <item>요한이서</item>  <!-- 62 -->
+        <item>요한삼서</item>  <!-- 63 -->
+        <item>유다서</item>  <!-- 64 -->
+        <item>요한계시록</item>  <!-- 65 -->
+    </string-array>
+</resources>

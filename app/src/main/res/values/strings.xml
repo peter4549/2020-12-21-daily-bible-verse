@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">BibleReadingHabits</string>
+
+    <!-- ScrollingViewBehavior -->
+    <string name="appbar_scrolling_view_behavior" translatable="false">
+        com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior
+    </string>
+
+    <!-- Options Menu -->
+    <string name="settings">설정</string>
+
+    <!-- Drawer -->
+    <string name="open">open</string>
+    <string name="close">close</string>
+    <string name="daily_bible_verse">매일 성경 구절</string>
+    <string name="share">공유하기</string>
+</resources>
