@@ -4,12 +4,11 @@
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/drawerLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:layout_height="match_parent">
 
         <include
             android:id="@+id/fragmentDailyBibleVerse"
-            layout="@layout/fragment_daily_bible_verse" />
+            layout="@layout/fragment_daily_bible_verses" />
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigation_view"
@@ -17,6 +16,5 @@
             android:layout_height="match_parent"
             android:layout_gravity="start"
             app:menu="@menu/menu_drawer"/>
-
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

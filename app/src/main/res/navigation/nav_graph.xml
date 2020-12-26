@@ -5,14 +5,29 @@
 
     <fragment
         android:id="@+id/dailyBibleVerseFragment"
-        android:name="com.duke.elliot.biblereadinghabits.daily_bible_verse.DailyBibleVerseFragment"
+        android:name="com.duke.elliot.biblereadinghabits.daily_bible_verses.DailyBibleVerseFragment"
         android:label="DailyBibleVerseFragment" >
         <action
             android:id="@+id/action_dailyBibleVerseFragment_to_bibleReadingFragment"
-            app:destination="@id/bibleReadingFragment" />
+            app:destination="@id/bibleReadingFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right"/>
+        <action
+            android:id="@+id/action_dailyBibleVerseFragment_to_favoriteBibleVersesFragment"
+            app:destination="@id/favoriteBibleVersesFragment"
+            app:enterAnim="@anim/anim_slide_in_right"
+            app:exitAnim="@anim/anim_slide_out_left"
+            app:popEnterAnim="@anim/anim_slide_in_left"
+            app:popExitAnim="@anim/anim_slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/bibleReadingFragment"
         android:name="com.duke.elliot.biblereadinghabits.bible_reading.BibleReadingFragment"
         android:label="BibleReadingFragment" />
+    <fragment
+        android:id="@+id/favoriteBibleVersesFragment"
+        android:name="com.duke.elliot.biblereadinghabits.favorite_bible_verses.FavoriteBibleVersesFragment"
+        android:label="FavoriteBibleVersesFragment" />
 </navigation>

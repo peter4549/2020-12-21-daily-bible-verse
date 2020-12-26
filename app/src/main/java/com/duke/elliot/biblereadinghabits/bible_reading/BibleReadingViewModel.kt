@@ -4,12 +4,14 @@ import android.app.Application
 import android.content.Context
 import android.os.Parcelable
 import androidx.lifecycle.ViewModel
+import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.database.AppDatabase
+import com.duke.elliot.biblereadinghabits.database.StaticAppDatabase
 import kotlinx.android.parcel.Parcelize
 
 class BibleReadingViewModel(private val application: Application): ViewModel() {
 
-    private val bibleVerseDao = AppDatabase.getInstance(application).bibleVerseDao()
+    private val bibleVerseDao = StaticAppDatabase.getInstance(application).bibleVerseDao()
     val lastBibleVerseInformation = getLastBibleVerseRead()
 
     fun getBook(index: Int) = bibleVerseDao.getBook(index)

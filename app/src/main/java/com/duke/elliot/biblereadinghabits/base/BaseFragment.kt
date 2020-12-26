@@ -11,11 +11,15 @@ open class BaseFragment: Fragment() {
 
     private var menuRes: Int? = null
     private var onBackPressed: (() -> Unit)? = null
+    private var onHomePressed: (() -> Unit)? = null
     private var optionsItemIdAndOnSelectedListeners = mutableMapOf<Int, () -> Unit>()
+
+    protected fun setOnHomePressedCallback(onHomePressed: () -> Unit) {
+        this.onHomePressed = onHomePressed
+    }
 
     protected fun setOnBackPressedCallback(onBackPressed: () -> Unit) {
         this.onBackPressed = onBackPressed
-
         val onBackPressedCallback: OnBackPressedCallback =
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
@@ -29,15 +33,14 @@ open class BaseFragment: Fragment() {
         )
     }
 
-    @Suppress("SameParameterValue")
     protected fun setDisplayHomeAsUpEnabled(toolbar: Toolbar, displayHomeAsUpEnable: Boolean) {
         (requireActivity() as MainActivity).setSupportActionBar(toolbar)
         (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUpEnable)
         setHasOptionsMenu(true)
     }
 
-    @Suppress("SameParameterValue")
-    protected fun setOptionsMenu(menuRes: Int?) {
+    protected fun setOptionsMenu(toolbar: Toolbar, menuRes: Int?) {
+        (requireActivity() as MainActivity).setSupportActionBar(toolbar)
         this.menuRes = menuRes
         setHasOptionsMenu(true)
     }
@@ -59,7 +62,7 @@ open class BaseFragment: Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            android.R.id.home -> onBackPressed?.invoke()
+            android.R.id.home -> onHomePressed?.invoke()
             else -> optionsItemIdAndOnSelectedListeners[item.itemId]?.invoke()
         }
 

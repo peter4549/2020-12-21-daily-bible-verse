@@ -9,4 +9,11 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="default_primary_theme">@color/teal_200</color>
+
+    <color name="fragment_background">@color/black</color>
+
+    <color name="icon_enabled">@color/black</color>
+    <color name="icon_disabled">@color/dark_gray</color>
+    <color name="text_enabled">@color/black</color>
+    <color name="text_disabled">@color/dark_gray</color>
 </resources>

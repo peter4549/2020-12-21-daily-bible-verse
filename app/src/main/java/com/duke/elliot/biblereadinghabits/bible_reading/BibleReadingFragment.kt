@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.base.BaseFragment
 import com.duke.elliot.biblereadinghabits.database.BibleVerse
@@ -36,14 +37,24 @@ class BibleReadingFragment: BaseFragment() {
         viewModel = ViewModelProvider(viewModelStore, viewModelFactory)[BibleReadingViewModel::class.java]
 
         viewModel.getBook(viewModel.lastBibleVerseInformation.book).observe(
-            viewLifecycleOwner,
-            Observer {
-                val bibleVersesAdapter = BibleVersesAdapter(requireActivity(), it.chunked(5))
+            viewLifecycleOwner, Observer { bibleVerses ->
+                val displayBibleVerses = mutableListOf<List<BibleVerse>>()
+                val groupedBibleVerses = bibleVerses.groupBy { it.chapter }
+
+                val keys = groupedBibleVerses.keys.sorted()
+                for (key in keys) {
+                    val values = groupedBibleVerses[key] ?: continue
+                    val sortedValues = values.sortedBy { it.verse }
+                    displayBibleVerses.addAll(sortedValues.chunked(5))
+                }
+
+                val bibleVersesAdapter = BibleVersesAdapter(requireActivity(), displayBibleVerses)
                 binding.bibleVerseViewPager2.adapter = bibleVersesAdapter
 
                 val bookFlipPageTransformer = BookFlipPageTransformer2()
                 bookFlipPageTransformer.isEnableScale = true
-                bookFlipPageTransformer.scaleAmountPercent = 10F
+                bookFlipPageTransformer.scaleAmountPercent = 5F
+                binding.bibleVerseViewPager2.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT_DEFAULT
                 binding.bibleVerseViewPager2.setPageTransformer(bookFlipPageTransformer)
             })
 
@@ -53,8 +64,7 @@ class BibleReadingFragment: BaseFragment() {
     private inner class BibleVersesAdapter(
         fragmentActivity: FragmentActivity,
         private val bibleVerses: List<List<BibleVerse>>
-    )
-        : FragmentStateAdapter(fragmentActivity) {
+    ) : FragmentStateAdapter(fragmentActivity) {
         override fun getItemCount(): Int = bibleVerses.count()
 
         override fun createFragment(position: Int): Fragment {

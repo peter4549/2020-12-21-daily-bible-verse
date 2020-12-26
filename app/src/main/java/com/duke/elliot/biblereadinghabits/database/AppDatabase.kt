@@ -5,12 +5,11 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-const val DATABASE_NAME = "com.duke.elliot.bible_reading_habits.app_data_base.v1.0.0-debug12"
+const val APP_DATABASE_NAME = "com.duke.elliot.bible_reading_habits.app_data_base.v1.0.0-debug1"
 
-@Database(entities = [BibleVerse::class, PopularBibleVerse::class], version = 1)
+@Database(entities = [FavoriteBibleVerse::class], version = 1)
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun bibleVerseDao(): BibleVerseDao
-    abstract fun popularBibleVerseDao(): PopularBibleVerseDao
+    abstract fun favoriteBibleVerseDao(): FavoriteBibleVerseDao
 
     companion object {
         @Volatile
@@ -24,28 +23,12 @@ abstract class AppDatabase: RoomDatabase() {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
                         AppDatabase::class.java,
-                        DATABASE_NAME
+                        APP_DATABASE_NAME
                     )
                         .fallbackToDestructiveMigration()
                         .build()
                     this.instance = instance
                 }
-                return instance
-            }
-        }
-
-        fun getInstanceFromAsset(context: Context, databaseFilePath: String): AppDatabase {
-            synchronized(this) {
-                var instance = instance
-
-                if (instance == null) {
-                    instance = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, DATABASE_NAME)
-                        .createFromAsset(databaseFilePath)
-                        .fallbackToDestructiveMigration()
-                        .build()
-                    this.instance = instance
-                }
-
                 return instance
             }
         }

@@ -7,6 +7,15 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gold">#FFD700</color>
+    <color name="dark_gray">#A9A9A9</color>
 
     <color name="default_primary_theme">@color/teal_200</color>
+
+    <color name="fragment_background">@color/white</color>
+
+    <color name="icon_enabled">@color/white</color>
+    <color name="icon_disabled">@color/dark_gray</color>
+    <color name="text_enabled">@color/white</color>
+    <color name="text_disabled">@color/dark_gray</color>
 </resources>

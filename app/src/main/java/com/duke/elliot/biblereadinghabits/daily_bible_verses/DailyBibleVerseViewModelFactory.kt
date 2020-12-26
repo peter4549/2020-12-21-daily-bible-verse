@@ -1,4 +1,4 @@
-package com.duke.elliot.biblereadinghabits.daily_bible_verse
+package com.duke.elliot.biblereadinghabits.daily_bible_verses
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

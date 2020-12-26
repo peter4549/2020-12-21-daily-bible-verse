@@ -1,20 +1,21 @@
-package com.duke.elliot.biblereadinghabits.daily_bible_verse
+package com.duke.elliot.biblereadinghabits.daily_bible_verses
 
 import android.app.Application
-import android.content.Context
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.database.AppDatabase
 import com.duke.elliot.biblereadinghabits.database.BibleVerse
+import com.duke.elliot.biblereadinghabits.database.StaticAppDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class DailyBibleVerseViewModel(private val application: Application): ViewModel() {
-    private val appDatabase = AppDatabase.getInstanceFromAsset(application, "BibleVerses.db")
-    val bibleVerseDao = appDatabase.bibleVerseDao()
-    val popularBibleVerseDao = appDatabase.popularBibleVerseDao()
+    private val staticAppDatabase = StaticAppDatabase.getInstanceFromAsset(application, "BibleVerses.db")
+    private val appDatabase = AppDatabase.getInstance(application)
+    val bibleVerseDao = staticAppDatabase.bibleVerseDao()
+    val favoriteBibleVerseDao = appDatabase.favoriteBibleVerseDao()
+    val popularBibleVerseDao = staticAppDatabase.popularBibleVerseDao()
     private val books = application.resources.getStringArray(R.array.books)
 
     fun getBook(index: Int): String = books[index.dec()]

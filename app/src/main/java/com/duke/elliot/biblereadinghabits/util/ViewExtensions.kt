@@ -1,6 +1,7 @@
 package com.duke.elliot.biblereadinghabits.util
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.view.View
 
 fun View.scaleDown(scale: Float = 0.75F, duration: Long = 200L) {
@@ -65,4 +66,16 @@ fun View.showWithScaleUp(scale: Float = 0.75F, duration: Long = 200L) {
             override fun onAnimationRepeat(animator: Animator?) {  }
         })
         .start()
+}
+
+fun View.fadeIn(duration: Number) {
+    this.apply {
+        alpha = 0F
+        visibility = View.VISIBLE
+
+        animate()
+            .alpha(1F)
+            .setDuration(duration.toLong())
+            .setListener(null)
+    }
 }

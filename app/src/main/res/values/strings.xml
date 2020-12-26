@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BibleReadingHabits</string>
+    <string name="app_name">성경 읽는 습관</string>
 
     <!-- ScrollingViewBehavior -->
     <string name="appbar_scrolling_view_behavior" translatable="false">
@@ -8,10 +8,22 @@
 
     <!-- Options Menu -->
     <string name="settings">설정</string>
+    <string name="favorite">즐겨찾기</string>
 
     <!-- Drawer -->
     <string name="open">open</string>
     <string name="close">close</string>
     <string name="daily_bible_verse">매일 성경 구절</string>
-    <string name="share">공유하기</string>
+    <string name="share">공유</string>
+
+    <!-- Context Menu -->
+    <string name="add_to_favorites">즐겨찾기 추가</string>
+    <string name="copy_to_clipboard">클랍보드 복사</string>
+
+    <!-- Clipboard -->
+    <string name="copy_to_clipboard_success">클립보드에 복사되었습니다.</string>
+    <string name="copy_to_clipboard_failed_message">클립보드에 복사 실패</string>
+
+    <!-- Favorite Bible Verses -->
+    <string name="favorite_bible_verses_empty_message">즐겨찾기에 추가된 성경 구절이 없습니다.</string>
 </resources>

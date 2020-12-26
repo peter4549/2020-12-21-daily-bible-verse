@@ -1,11 +1,6 @@
-package com.duke.elliot.biblereadinghabits.daily_bible_verse
+package com.duke.elliot.biblereadinghabits.daily_bible_verses
 
 import android.content.Context
-import com.duke.elliot.biblereadinghabits.database.AppDatabase
-import com.duke.elliot.biblereadinghabits.database.BibleVerse
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 
 object DailyBibleVerseUtil {
 
