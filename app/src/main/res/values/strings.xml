@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">성경 읽는 습관</string>
 
+    <string name="cancel">취소</string>
+    <string name="ok">확인</string>
+
     <!-- ScrollingViewBehavior -->
     <string name="appbar_scrolling_view_behavior" translatable="false">
         com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior
@@ -14,6 +17,15 @@
     <string name="open">open</string>
     <string name="close">close</string>
     <string name="daily_bible_verse">매일 성경 구절</string>
+    <string name="select_range">범위 설정</string>
+    <string name="select_from_popular_bible_verses_title">유명 성경 구절에서 선택</string>
+    <string name="select_from_popular_bible_verses_description">100개의 유명한 성경 구절에서 선택합니다.</string>
+    <string name="select_from_favorites_title">즐겨찾기에서 선택</string>
+    <string name="select_from_favorites_description">즐겨찾기에서 선택합니다.</string>
+    <string name="select_at_random_title">랜덤으로 선택</string>
+    <string name="select_at_random_description">전체 성경 구절에서 랜덤으로 선택합니다.</string>
+    <string name="select_in_order_title">순서대로 선택</string>
+    <string name="select_in_order_description">전체 성경 구절에서 순서대로 선택합니다.</string>
     <string name="share">공유</string>
 
     <!-- Context Menu -->
@@ -26,4 +38,5 @@
 
     <!-- Favorite Bible Verses -->
     <string name="favorite_bible_verses_empty_message">즐겨찾기에 추가된 성경 구절이 없습니다.</string>
+
 </resources>

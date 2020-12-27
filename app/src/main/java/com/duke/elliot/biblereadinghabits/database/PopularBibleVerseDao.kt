@@ -9,7 +9,7 @@ interface PopularBibleVerseDao {
     fun getAll(): LiveData<MutableList<PopularBibleVerse>>
 
     @Query("SELECT * FROM popular_bible_verse ORDER BY id ASC")
-    fun getAllValues(): List<PopularBibleVerse>
+    fun getAllValue(): List<PopularBibleVerse>
 
     @Insert
     fun insert(popularBibleVerse: PopularBibleVerse)

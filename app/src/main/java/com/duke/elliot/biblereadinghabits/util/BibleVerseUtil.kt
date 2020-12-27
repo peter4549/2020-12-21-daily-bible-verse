@@ -58,7 +58,8 @@ object BibleVerseUtil {
                 book = bibleVerse.book,
                 chapter = bibleVerse.chapter,
                 verse = bibleVerse.verse,
-                word = bibleVerse.word
+                word = bibleVerse.word,
+                addedTime = System.currentTimeMillis()
             )
 
             favoriteBibleVerseDao.insert(favoriteBibleVerse)

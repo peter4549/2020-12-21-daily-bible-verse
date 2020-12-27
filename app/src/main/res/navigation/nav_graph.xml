@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/dailyBibleVerseFragment"
-        android:name="com.duke.elliot.biblereadinghabits.daily_bible_verses.DailyBibleVerseFragment"
+        android:name="com.duke.elliot.biblereadinghabits.daily_bible_verse.DailyBibleVerseFragment"
         android:label="DailyBibleVerseFragment" >
         <action
             android:id="@+id/action_dailyBibleVerseFragment_to_bibleReadingFragment"

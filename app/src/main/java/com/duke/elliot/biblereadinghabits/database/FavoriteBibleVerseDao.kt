@@ -9,6 +9,9 @@ interface FavoriteBibleVerseDao {
     @Query("SELECT * FROM favorite_bible_verse")
     fun getAll(): LiveData<MutableList<FavoriteBibleVerse>>
 
+    @Query("SELECT * FROM favorite_bible_verse ORDER BY added_time ASC")
+    fun getAllValue(): List<FavoriteBibleVerse>
+
     @Insert
     fun insert(favoriteBibleVerse: FavoriteBibleVerse)
 
