@@ -25,7 +25,12 @@
     <fragment
         android:id="@+id/bibleReadingFragment"
         android:name="com.duke.elliot.biblereadinghabits.bible_reading.BibleReadingFragment"
-        android:label="BibleReadingFragment" />
+        android:label="BibleReadingFragment">
+        <argument
+            android:name="bookPage"
+            app:argType="com.duke.elliot.biblereadinghabits.bible_reading.BookPage"
+            app:nullable="true" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteBibleVersesFragment"
         android:name="com.duke.elliot.biblereadinghabits.favorite_bible_verses.FavoriteBibleVersesFragment"

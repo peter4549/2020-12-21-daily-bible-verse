@@ -12,4 +12,6 @@ package com.duke.elliot.biblereadinghabits
  *
  * [안드로이드]This Activity already has an action bar supplied by the window decor.
  * https://m.blog.naver.com/PostView.nhn?blogId=vivacarla&logNo=221175906806&proxyReferer=https:%2F%2Fwww.google.com%2F
+ * List of Android UI/UX Libraries
+ * https://github.com/wasabeef/awesome-android-ui
  */

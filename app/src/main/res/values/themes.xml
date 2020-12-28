@@ -12,5 +12,18 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
+        <item name="actionBarTheme">@style/ToolbarTheme</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/toolbar_title</item>
+        <item name="android:textColorPrimary">@color/toolbar_title</item>
+        <item name="android:textColorSecondary">@color/toolbar_title</item>
+        <item name="android:textColor">@color/color_text</item>
+    </style>
+
+    <style name="NanumMyeonjoBoldTextAppearance">
+        <item name="android:fontFamily">@font/nanum_myeongjo_bold</item>
     </style>
 </resources>

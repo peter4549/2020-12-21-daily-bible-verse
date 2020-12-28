@@ -6,11 +6,13 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.duke.elliot.biblereadinghabits.databinding.ItemMenuContentBinding
+import com.duke.elliot.biblereadinghabits.databinding.ItemMenuDividerBinding
 import com.duke.elliot.biblereadinghabits.databinding.ItemMenuSubtitleBinding
 import java.lang.IllegalArgumentException
 
 const val DRAWER_MENU_ITEM_CONTENT = 1605
 const val DRAWER_MENU_ITEM_SUBTITLE = 1606
+const val DRAWER_MENU_ITEM_DIVIDER = 1607
 
 class DrawerMenuItemAdapter(private val drawerMenuItems: ArrayList<DrawerMenuItem>):
     RecyclerView.Adapter<DrawerMenuItemAdapter.ViewHolder>() {
@@ -35,10 +37,16 @@ class DrawerMenuItemAdapter(private val drawerMenuItems: ArrayList<DrawerMenuIte
                     binding.root.setOnClickListener {
                         drawerMenuItem.onClickListener?.invoke()
                     }
+
+                    if (drawerMenuItem.iconResourceId != null)
+                        drawerMenuItem.iconColor?.let {
+                            binding.icon.setColorFilter(it)
+                        }
                 }
                 is ItemMenuSubtitleBinding -> {
                     binding.subtitle.text = drawerMenuItem.title
                 }
+                is ItemMenuDividerBinding -> { /** Divider */ }
             }
         }
     }
@@ -51,6 +59,11 @@ class DrawerMenuItemAdapter(private val drawerMenuItems: ArrayList<DrawerMenuIte
                 false
             )
             DRAWER_MENU_ITEM_SUBTITLE -> ItemMenuSubtitleBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+            DRAWER_MENU_ITEM_DIVIDER -> ItemMenuDividerBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false

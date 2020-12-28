@@ -1,16 +1,9 @@
 package com.duke.elliot.biblereadinghabits.daily_bible_verse
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
-import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.database.BibleVerse
 import com.duke.elliot.biblereadinghabits.database.BibleVerseDao
-import com.duke.elliot.biblereadinghabits.database.BibleVerseInformation
-import com.duke.elliot.biblereadinghabits.database.FavoriteBibleVerseDao
-import com.duke.elliot.biblereadinghabits.util.BIBLE_BOOK_COUNT
 import com.duke.elliot.biblereadinghabits.util.BIBLE_VERSE_COUNT
-import com.duke.elliot.biblereadinghabits.util.POPULAR_BIBLE_VERSES_COUNT
 import kotlinx.coroutines.*
 
 object DailyBibleVerseUtil {

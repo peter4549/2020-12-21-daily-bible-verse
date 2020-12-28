@@ -6,6 +6,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.duke.elliot.biblereadinghabits.main.MainActivity
+import com.duke.elliot.biblereadinghabits.main.MainApplication
 
 open class BaseFragment: Fragment() {
 
@@ -67,6 +68,17 @@ open class BaseFragment: Fragment() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    protected fun applyPrimaryThemeColor(vararg views: View) {
+        for (view in views) {
+            view.setBackgroundColor(MainApplication.primaryThemeColor)
+            view.invalidate()
+        }
+    }
+
+    protected fun setToolbarFont(toolbar: Toolbar, resId: Int) {
+        toolbar.setTitleTextAppearance(requireContext(), resId)
     }
 
     protected fun showToast(text: String, duration: Int = Toast.LENGTH_LONG) {

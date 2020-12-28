@@ -31,6 +31,12 @@ class FavoriteBibleVersesFragment: BaseFragment() {
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_favorite_bible_verses, container, false)
 
+        setToolbarFont(
+            binding.toolbar,
+            R.style.NanumMyeonjoBoldTextAppearance
+        )
+        applyPrimaryThemeColor(binding.toolbar)
+
         val viewModelFactory = FavoriteBibleVersesViewModelFactory(requireActivity().application)
         viewModel = ViewModelProvider(viewModelStore, viewModelFactory)[FavoriteBibleVersesViewModel::class.java]
 

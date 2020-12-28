@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-const val STATIC_APP_DATABASE_NAME = "com.duke.elliot.bible_reading_habits.static_app_data_base.v1.0.1-debug2"
+const val STATIC_APP_DATABASE_NAME = "com.duke.elliot.bible_reading_habits.static_app_data_base.v1.0.1-debug3"
 
 @Database(entities = [BibleVerse::class, PopularBibleVerse::class], version = 1)
 abstract class StaticAppDatabase: RoomDatabase() {

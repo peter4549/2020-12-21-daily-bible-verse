@@ -1,6 +1,7 @@
 package com.duke.elliot.biblereadinghabits.bible_reading
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.base.BaseFragment
 import com.duke.elliot.biblereadinghabits.database.BibleVerse
 import com.duke.elliot.biblereadinghabits.databinding.FragmentBiblePageBinding
+import com.duke.elliot.biblereadinghabits.main.MainApplication
 import com.duke.elliot.biblereadinghabits.util.fadeIn
 import kotlinx.android.synthetic.main.item_bible_verse_word_only.view.*
 
@@ -73,6 +75,7 @@ class BiblePageFragment: BaseFragment() {
             val text = "$verse $word"
 
             holder.view.word.text = text
+            holder.view.word.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize)
         }
 
         override fun getItemCount(): Int = bibleVerses.count()
@@ -87,6 +90,8 @@ class BiblePageFragment: BaseFragment() {
         bibleVerseAdapter = BibleVerseAdapter(bibleVerses)
         binding.bookAndChapter.text = bookAndChapterText
         binding.verseRecyclerView.adapter = bibleVerseAdapter
+
+        binding.bookAndChapter.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize + 2)
     }
 
     companion object {

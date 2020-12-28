@@ -84,6 +84,7 @@
                         android:layout_marginEnd="@dimen/spacing_medium"
                         android:gravity="center_vertical|end"
                         android:textSize="16sp"
+                        android:textStyle="bold"
                         android:fontFamily="@font/font_family_nanum_myeongjo"
                         tools:text="열왕기하 6장 32절"/>
                 </RelativeLayout>
@@ -113,5 +114,29 @@
             app:srcCompat="@drawable/ic_holy_bible_50px"
             app:tint="@color/white"
             tools:ignore="ContentDescription" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/bookmarkContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="144dp"
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="@dimen/spacing_medium"
+            android:background="@android:color/transparent"
+            android:elevation="8dp">
+
+            <ImageView
+                android:id="@+id/bookmark"
+                android:layout_width="96dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="48dp"
+                android:scaleType="fitXY"
+                android:scaleY="-1"
+                android:alpha=".50"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_sharp_bookmark_24"
+                tools:ignore="ContentDescription" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

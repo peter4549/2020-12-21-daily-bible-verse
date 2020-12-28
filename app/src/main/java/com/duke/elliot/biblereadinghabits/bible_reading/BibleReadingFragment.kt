@@ -9,18 +9,30 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.base.BaseFragment
+import com.duke.elliot.biblereadinghabits.bible_reading.bookmark.BibleBookmarkUtil
+import com.duke.elliot.biblereadinghabits.daily_bible_verse.DailyBibleVerseFragmentDirections
 import com.duke.elliot.biblereadinghabits.database.BibleVerse
 import com.duke.elliot.biblereadinghabits.databinding.FragmentBibleReadingBinding
+import com.duke.elliot.biblereadinghabits.main.MainApplication
+import com.flyco.dialog.widget.NormalListDialog
 import com.wajahatkarim3.easyflipviewpager.BookFlipPageTransformer2
+import kotlinx.coroutines.*
 
 class BibleReadingFragment: BaseFragment() {
 
     private lateinit var binding: FragmentBibleReadingBinding
     private lateinit var viewModel: BibleReadingViewModel
+    private lateinit var onPageChangeCallback: ViewPager2.OnPageChangeCallback
+
+    private val job = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,32 +45,146 @@ class BibleReadingFragment: BaseFragment() {
             container,
             false
         )
-        val viewModelFactory = BibleReadingViewModelFactory(requireActivity().application)
+
+        val bibleReadingFragmentArgs by navArgs<BibleReadingFragmentArgs>()
+        val bookPage = bibleReadingFragmentArgs.bookPage
+
+        val viewModelFactory = BibleReadingViewModelFactory(requireActivity().application, bookPage)
         viewModel = ViewModelProvider(viewModelStore, viewModelFactory)[BibleReadingViewModel::class.java]
 
-        viewModel.getBook(viewModel.lastBibleVerseInformation.book).observe(
-            viewLifecycleOwner, Observer { bibleVerses ->
-                val displayBibleVerses = mutableListOf<List<BibleVerse>>()
-                val groupedBibleVerses = bibleVerses.groupBy { it.chapter }
-
-                val keys = groupedBibleVerses.keys.sorted()
-                for (key in keys) {
-                    val values = groupedBibleVerses[key] ?: continue
-                    val sortedValues = values.sortedBy { it.verse }
-                    displayBibleVerses.addAll(sortedValues.chunked(5))
+        setOnOptionsItemSelectedListeners(
+            R.id.add_to_bookmark to {
+                BibleBookmarkUtil.addToBookmarks(
+                    requireContext(),
+                    viewModel.currentBookPage,
+                    viewModel.firstBibleVerseOnCurrentPage
+                )
+                showToast(getString(R.string.add_to_bookmark_success))
+            },
+            R.id.select_book to {
+                val normalListDialog =
+                    NormalListDialog(requireContext(), viewModel.books)
+                normalListDialog.title(getString(R.string.select_book))
+                normalListDialog.titleBgColor(MainApplication.primaryThemeColor)
+                normalListDialog.setOnOperItemClickL { _, _, position, _ ->
+                    coroutineScope.launch {
+                        viewModel.currentBookPage.book = position.inc()
+                        viewModel.currentBookPage.page = 0
+                        viewModel.currentBook.value = position.inc()
+                        normalListDialog.dismiss()
+                    }
                 }
+                normalListDialog.show()
+            },
+            R.id.show_bookmarks to {
+                val bookmarks = BibleBookmarkUtil.getBookmarks(requireContext())
 
-                val bibleVersesAdapter = BibleVersesAdapter(requireActivity(), displayBibleVerses)
-                binding.bibleVerseViewPager2.adapter = bibleVersesAdapter
+                if (bookmarks.isNotEmpty()) {
+                    val bookmarkTexts = bookmarks.map { it.second }
+                    val normalListDialog =
+                        NormalListDialog(requireContext(), bookmarkTexts.toTypedArray())
+                    normalListDialog.title(getString(R.string.bookmark))
+                    normalListDialog.titleBgColor(MainApplication.primaryThemeColor)
+                    normalListDialog.setOnOperItemClickL { _, _, position, _ ->
+                        val bookmark = bookmarks[position].first
+                        viewModel.currentBookPage.book = bookmark.book
+                        viewModel.currentBookPage.page = bookmark.page
+                        viewModel.currentBook.value = bookmark.book
 
-                val bookFlipPageTransformer = BookFlipPageTransformer2()
-                bookFlipPageTransformer.isEnableScale = true
-                bookFlipPageTransformer.scaleAmountPercent = 5F
-                binding.bibleVerseViewPager2.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT_DEFAULT
-                binding.bibleVerseViewPager2.setPageTransformer(bookFlipPageTransformer)
+                        normalListDialog.dismiss()
+                    }
+                    normalListDialog.show()
+                } else
+                    showToast(getString(R.string.bookmarks_empty_message))
+            },
+            R.id.delete_bookmark to {
+                val bookmarks = BibleBookmarkUtil.getBookmarks(requireContext())
+
+                if (bookmarks.isNotEmpty()) {
+                    val bookmarkTexts = bookmarks.map { it.second }
+                    val normalListDialog =
+                        NormalListDialog(requireContext(), bookmarkTexts.toTypedArray())
+                    normalListDialog.title(getString(R.string.delete_bookmark))
+                    normalListDialog.titleBgColor(MainApplication.primaryThemeColor)
+                    normalListDialog.setOnOperItemClickL { _, _, position, _ ->
+                        BibleBookmarkUtil.deleteFromBookmarks(requireContext(), position)
+                        normalListDialog.dismiss()
+                    }
+                    normalListDialog.show()
+                } else
+                    showToast(getString(R.string.bookmarks_empty_message))
+            }
+        )
+
+        setToolbarFont(
+            binding.toolbar,
+            R.style.NanumMyeonjoBoldTextAppearance
+        )
+        applyPrimaryThemeColor(binding.toolbar)
+        initViewPager2()
+
+        viewModel.currentBook.observe(
+            viewLifecycleOwner, Observer { book ->
+                coroutineScope.launch {
+                    val bibleVerses = withContext(Dispatchers.IO) {
+                            viewModel.bibleVerseDao.getBookValue(book)
+                        }
+
+                    val displayBibleVerses = mutableListOf<List<BibleVerse>>()
+                    val groupedBibleVerses = bibleVerses.groupBy { it.chapter }
+
+                    val keys = groupedBibleVerses.keys.sorted()
+                    for (key in keys) {
+                        val values = groupedBibleVerses[key] ?: continue
+                        val sortedValues = values.sortedBy { it.verse }
+                        displayBibleVerses.addAll(sortedValues.chunked(5))
+                    }
+
+                    val currentPage = viewModel.currentBookPage.page
+
+                    val bibleVersesAdapter =
+                        BibleVersesAdapter(requireActivity(), displayBibleVerses)
+                    binding.bibleVerseViewPager2.adapter = bibleVersesAdapter
+                    binding.bibleVerseViewPager2.post {
+                        binding.bibleVerseViewPager2.setCurrentItem(currentPage, true)
+                    }
+
+                    val bookFlipPageTransformer = BookFlipPageTransformer2()
+                    bookFlipPageTransformer.isEnableScale = true
+                    bookFlipPageTransformer.scaleAmountPercent = 5F
+                    binding.bibleVerseViewPager2.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT_DEFAULT
+                    binding.bibleVerseViewPager2.setPageTransformer(bookFlipPageTransformer)
+                }
             })
 
+        setDisplayHomeAsUpEnabled(binding.toolbar, true)
+        setOptionsMenu(binding.toolbar, R.menu.menu_bible_reading)
+        setOnHomePressedCallback {
+            findNavController().popBackStack()
+        }
+
         return binding.root
+    }
+
+    private fun initViewPager2() {
+        onPageChangeCallback = object: ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                val item = (binding.bibleVerseViewPager2.adapter as BibleVersesAdapter).getItem(position)
+                val bibleVerse = item[0]
+                viewModel.currentBookPage.book = bibleVerse.book
+                viewModel.currentBookPage.page = position
+                viewModel.firstBibleVerseOnCurrentPage = bibleVerse
+                super.onPageSelected(position)
+            }
+        }
+
+        binding.bibleVerseViewPager2.registerOnPageChangeCallback(onPageChangeCallback)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        binding.bibleVerseViewPager2.unregisterOnPageChangeCallback(onPageChangeCallback)
+        viewModel.saveLastBookPageRead()
     }
 
     private inner class BibleVersesAdapter(
@@ -75,6 +201,8 @@ class BibleReadingFragment: BaseFragment() {
 
             return fragment
         }
+
+        fun getItem(position: Int) = bibleVerses[position]
     }
 
     companion object {

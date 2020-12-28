@@ -27,6 +27,9 @@
     <string name="select_in_order_title">순서대로 선택</string>
     <string name="select_in_order_description">전체 성경 구절에서 순서대로 선택합니다.</string>
     <string name="share">공유</string>
+    <string name="font_size_and_theme_color">글꼴 크기 및 테마 색상</string>
+    <string name="font_size">글꼴 크기</string>
+    <string name="theme_color">테마 색상</string>
 
     <!-- Context Menu -->
     <string name="add_to_favorites">즐겨찾기 추가</string>
@@ -39,4 +42,12 @@
     <!-- Favorite Bible Verses -->
     <string name="favorite_bible_verses_empty_message">즐겨찾기에 추가된 성경 구절이 없습니다.</string>
 
+    <!-- Bible Reading Options Menu -->
+    <string name="bookmark">책갈피</string>
+    <string name="add_to_bookmark">책갈피에 추가</string>
+    <string name="add_to_bookmark_success">현재 페이지를 책갈피에 추가했습니다.</string>
+    <string name="select_book">책 선택</string>
+    <string name="show_bookmarks">책갈피 보기</string>
+    <string name="delete_bookmark">책갈피 삭제</string>
+    <string name="bookmarks_empty_message">책갈피가 비었습니다.</string>
 </resources>

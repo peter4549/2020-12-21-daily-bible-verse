@@ -21,6 +21,6 @@ class AlarmReceiver: BroadcastReceiver() {
                 DailyBibleVerseUpdateManager.increaseInOrderBibleVerseInformation(context)
         }
 
-        DailyBibleVerseUpdateManager.setUpdateDailyBibleVerseAlarm(context)
+        // DailyBibleVerseUpdateManager.setUpdateDailyBibleVerseAlarm(context)
     }
 }
