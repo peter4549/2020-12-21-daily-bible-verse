@@ -6,8 +6,9 @@ import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.database.AppDatabase
 
 class FavoriteBibleVersesViewModel(application: Application): ViewModel() {
-    val favoriteBibleVerses = AppDatabase.getInstance(application).favoriteBibleVerseDao().getAll()
+    val favoriteBibleVerseDao = AppDatabase.getInstance(application).favoriteBibleVerseDao()
+    val favoriteBibleVerses = favoriteBibleVerseDao.getAll()
     private val books = application.resources.getStringArray(R.array.books)
 
-    fun getBook(index: Int) = books[index.dec()]
+    fun getBook(index: Int): String = books[index.dec()]
 }

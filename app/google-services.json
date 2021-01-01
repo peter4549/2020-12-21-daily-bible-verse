@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "825495723391",
+    "project_id": "biblereadinghabits",
+    "storage_bucket": "biblereadinghabits.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:825495723391:android:826c9eff9b0b7abdc34e4a",
+        "android_client_info": {
+          "package_name": "com.duke.elliot.biblereadinghabits"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "825495723391-efpfhbjadfas0shlpr4r04spg3aa0cmr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.duke.elliot.biblereadinghabits",
+            "certificate_hash": "0eaf0683b2c3b6b2b63f5bc7e1e26e95fced8486"
+          }
+        },
+        {
+          "client_id": "825495723391-2fqsu52u7fnrpa6bfnh8vpp8nkcuv44g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoJ3nrsiUhiBinyA2IpIKCAtNwpOJ-vJ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "825495723391-2fqsu52u7fnrpa6bfnh8vpp8nkcuv44g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

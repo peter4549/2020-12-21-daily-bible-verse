@@ -68,7 +68,7 @@ fun View.showWithScaleUp(scale: Float = 0.75F, duration: Long = 200L) {
         .start()
 }
 
-fun View.fadeIn(duration: Number) {
+fun View.fadeIn(duration: Number, onAnimationEndCallback: (view: View) -> Unit) {
     this.apply {
         alpha = 0F
         visibility = View.VISIBLE
@@ -76,6 +76,29 @@ fun View.fadeIn(duration: Number) {
         animate()
             .alpha(1F)
             .setDuration(duration.toLong())
-            .setListener(null)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    onAnimationEndCallback.invoke(this@fadeIn)
+                }
+            })
+    }
+}
+
+fun View.fadeOut(duration: Number, onAnimationEndCallback: (view: View) -> Unit) {
+    this.apply {
+        alpha = 1F
+        visibility = View.VISIBLE
+
+        animate()
+            .alpha(0F)
+            .setDuration(duration.toLong())
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    this@fadeOut.visibility = View.GONE
+                    onAnimationEndCallback.invoke(this@fadeOut)
+                }
+            })
     }
 }

@@ -3,6 +3,7 @@ package com.duke.elliot.biblereadinghabits.base
 import android.view.*
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import com.duke.elliot.biblereadinghabits.main.MainActivity
@@ -34,9 +35,9 @@ open class BaseFragment: Fragment() {
         )
     }
 
-    protected fun setDisplayHomeAsUpEnabled(toolbar: Toolbar, displayHomeAsUpEnable: Boolean) {
+    protected fun setDisplayHomeAsUpEnabled(toolbar: Toolbar) {
         (requireActivity() as MainActivity).setSupportActionBar(toolbar)
-        (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUpEnable)
+        (requireActivity() as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setHasOptionsMenu(true)
     }
 
@@ -70,9 +71,9 @@ open class BaseFragment: Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    protected fun applyPrimaryThemeColor(vararg views: View) {
+    protected fun setBackgroundColor(vararg views: View, @ColorInt color: Int = MainApplication.primaryThemeColor) {
         for (view in views) {
-            view.setBackgroundColor(MainApplication.primaryThemeColor)
+            view.setBackgroundColor(color)
             view.invalidate()
         }
     }

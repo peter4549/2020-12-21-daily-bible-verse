@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/fragment_background">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            android:minHeight="?attr/actionBarSize"
+            android:background="@color/default_primary_theme"
+            app:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:title="@string/search_bible_verse" />
+
+        <Spinner
+            android:id="@+id/bookSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:layout_marginTop="@dimen/spacing_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+        <Spinner
+            android:id="@+id/chapterSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:layout_marginTop="@dimen/spacing_medium"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bookSpinner" />
+
+        <Spinner
+            android:id="@+id/verseSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_large"
+            app:layout_constraintBottom_toBottomOf="@+id/chapterSpinner"
+            app:layout_constraintStart_toEndOf="@+id/chapterSpinner"
+            app:layout_constraintTop_toTopOf="@+id/chapterSpinner" />
+
+        <ImageView
+            android:id="@+id/search"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="@dimen/spacing_large"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintBottom_toBottomOf="@+id/verseSpinner"
+            app:layout_constraintStart_toEndOf="@+id/verseSpinner"
+            app:layout_constraintTop_toTopOf="@+id/verseSpinner"
+            app:srcCompat="@drawable/ic_baseline_search_24"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:id="@+id/bibleVerseContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_large"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/chapterSpinner">
+
+            <TextView
+                android:id="@+id/bibleVerseWord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/spacing_medium"
+                android:paddingEnd="@dimen/spacing_large"
+                android:paddingStart="@dimen/spacing_large"
+                android:paddingTop="@dimen/spacing_medium"
+                android:gravity="center"
+                android:textSize="18sp"
+                android:fontFamily="@font/font_family_nanum_myeongjo"
+                tools:text="그 때에 엘리사가 그 집에 앉았고 장로들이 저와 함께 앉았는데 왕이 자기 처소에서 사람을 보내었더니 그 사자가 이르기 전에 엘리사가 장로들에게 이르되 너희는 이 살인한 자의 자식이 내 머리를 취하려고 사람을 보내는 것을 보느냐 너희는 보다가 사자가 오거든 문을 닫고 문 안에 들이지 마라 그 주인의 말소리가 그 뒤에서 나지 아니하느냐 하고" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_large"
+                android:layout_marginStart="@dimen/spacing_large"
+                android:layout_marginTop="@dimen/spacing_medium">
+
+                <ImageView
+                    android:id="@+id/more"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="@dimen/spacing_medium"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_baseline_more_vert_24"
+                    app:tint="@color/color_icon"
+                    tools:ignore="ContentDescription" />
+
+                <TextView
+                    android:id="@+id/bibleVerseInformation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignStart="@id/more"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/spacing_medium"
+                    android:gravity="center_vertical|end"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/font_family_nanum_myeongjo"
+                    tools:text="열왕기하 6장 32절" />
+            </RelativeLayout>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

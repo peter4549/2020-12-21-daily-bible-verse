@@ -14,4 +14,8 @@ package com.duke.elliot.biblereadinghabits
  * https://m.blog.naver.com/PostView.nhn?blogId=vivacarla&logNo=221175906806&proxyReferer=https:%2F%2Fwww.google.com%2F
  * List of Android UI/UX Libraries
  * https://github.com/wasabeef/awesome-android-ui
+ *
+ * Build an App Widget
+ * https://developer.android.com/guide/topics/appwidgets
+ * https://parkbeommin.github.io/android/android-widget/
  */

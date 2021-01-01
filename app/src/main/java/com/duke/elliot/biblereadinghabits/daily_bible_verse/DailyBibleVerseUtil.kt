@@ -3,6 +3,8 @@ package com.duke.elliot.biblereadinghabits.daily_bible_verse
 import android.content.Context
 import com.duke.elliot.biblereadinghabits.database.BibleVerse
 import com.duke.elliot.biblereadinghabits.database.BibleVerseDao
+import com.duke.elliot.biblereadinghabits.database.FavoriteBibleVerseDao
+import com.duke.elliot.biblereadinghabits.database.PopularBibleVerseDao
 import com.duke.elliot.biblereadinghabits.util.BIBLE_VERSE_COUNT
 import kotlinx.coroutines.*
 
@@ -38,25 +40,17 @@ object DailyBibleVerseUtil {
         editor.apply()
     }
 
-    fun getBook() {
-
-    }
-
-    fun setBook() {
-
-    }
-
-    fun getPopularBibleVerseIndex(context: Context): Int {
+    private fun getPopularBibleVerseIndex(context: Context): Int {
         val preferences = context.getSharedPreferences(PREFERENCES_RANGE, Context.MODE_PRIVATE)
         return preferences.getInt(KEY_POPULAR_BIBLE_VERSE_INDEX, 0)
     }
 
-    fun getFavoriteBibleVerseIndex(context: Context): Int {
+    private fun getFavoriteBibleVerseIndex(context: Context): Int {
         val preferences = context.getSharedPreferences(PREFERENCES_RANGE, Context.MODE_PRIVATE)
         return preferences.getInt(KEY_FAVORITE_BIBLE_VERSE_INDEX, 0)
     }
 
-    fun getRandomBibleVerse(context: Context, bibleVerseDao: BibleVerseDao): BibleVerse = runBlocking {
+    private fun getRandomBibleVerse(context: Context, bibleVerseDao: BibleVerseDao): BibleVerse = runBlocking {
         val preferences = context.getSharedPreferences(PREFERENCES_RANGE, Context.MODE_PRIVATE)
         val editor = preferences.edit()
         val randomBibleVerseIndex = preferences.getInt(KEY_RANDOM_BIBLE_VERSE_INDEX, (0..BIBLE_VERSE_COUNT.dec()).random())
@@ -68,13 +62,114 @@ object DailyBibleVerseUtil {
         }
     }
 
-    fun getInOrderBibleVerseInformation(context: Context, bibleVerseDao: BibleVerseDao): BibleVerse = runBlocking {
+    private fun getInOrderBibleVerseInformation(context: Context, bibleVerseDao: BibleVerseDao): BibleVerse = runBlocking {
         val preferences = context.getSharedPreferences(PREFERENCES_RANGE, Context.MODE_PRIVATE)
         val inOrderBibleVerseIndex = preferences.getInt(KEY_IN_ORDER_BIBLE_VERSE_INDEX, 0)
 
         withContext(Dispatchers.IO) {
             val bibleVerses = bibleVerseDao.getAllValue()
             bibleVerses[inOrderBibleVerseIndex]
+        }
+    }
+
+    fun getDisplayPopularBibleVerses(
+        context: Context,
+        bibleVerseDao: BibleVerseDao,
+        popularBibleVerseDao: PopularBibleVerseDao
+    ): List<BibleVerse> = runBlocking {
+        val displayBibleVerses = mutableListOf<BibleVerse>()
+        val popularBibleVerseIndex = getPopularBibleVerseIndex(context)
+
+        withContext(Dispatchers.IO) {
+            val popularBibleVerse = popularBibleVerseDao.getAllValue()[popularBibleVerseIndex]
+            val book = popularBibleVerse.book
+            val chapter = popularBibleVerse.chapter
+            val verse = popularBibleVerse.verse
+            val bibleVerses = bibleVerseDao.getBookChapter(book, chapter)
+
+            for (i in verse - 1 until bibleVerses.size) {
+                displayBibleVerses.add(bibleVerses[i])
+
+                if (displayBibleVerses.count() > 4)
+                    break
+            }
+
+            displayBibleVerses.toList()
+        }
+    }
+
+    fun getDisplayFavoriteBibleVerses(
+        context: Context,
+        bibleVerseDao: BibleVerseDao,
+        favoriteBibleVerseDao: FavoriteBibleVerseDao,
+        popularBibleVerseDao: PopularBibleVerseDao
+    ): List<BibleVerse> = runBlocking {
+        val displayBibleVerses = mutableListOf<BibleVerse>()
+        val favoriteBibleVerseIndex = getFavoriteBibleVerseIndex(context)
+
+        withContext(Dispatchers.IO) {
+            val favoriteBibleVerses = favoriteBibleVerseDao.getAllValue()
+            if (favoriteBibleVerses.isEmpty())
+                return@withContext getDisplayPopularBibleVerses(context, bibleVerseDao, popularBibleVerseDao)
+
+            val favoriteBibleVerse = favoriteBibleVerses[favoriteBibleVerseIndex]
+            val book = favoriteBibleVerse.book
+            val chapter = favoriteBibleVerse.chapter
+            val verse = favoriteBibleVerse.verse
+            val bibleVerses = bibleVerseDao.getBookChapter(book, chapter)
+
+            for (i in verse - 1 until bibleVerses.size) {
+                displayBibleVerses.add(bibleVerses[i])
+
+                if (displayBibleVerses.count() > 4)
+                    break
+            }
+
+            displayBibleVerses.toList()
+        }
+    }
+
+    fun getDisplayRandomBibleVerses(context: Context, bibleVerseDao: BibleVerseDao): List<BibleVerse> = runBlocking {
+        val displayBibleVerses = mutableListOf<BibleVerse>()
+
+        withContext(Dispatchers.IO) {
+            val randomBibleVerse = getRandomBibleVerse(context, bibleVerseDao)
+
+            val book = randomBibleVerse.book
+            val chapter = randomBibleVerse.chapter
+            val verse = randomBibleVerse.verse
+            val bibleVerses = bibleVerseDao.getBookChapter(book, chapter)
+
+            for (i in verse - 1 until bibleVerses.size) {
+                displayBibleVerses.add(bibleVerses[i])
+
+                if (displayBibleVerses.count() > 4)
+                    break
+            }
+
+            displayBibleVerses.toList()
+        }
+    }
+
+    fun getDisplayInOrderBibleVerses(context: Context, bibleVerseDao: BibleVerseDao): List<BibleVerse> = runBlocking {
+        val displayBibleVerses = mutableListOf<BibleVerse>()
+
+        withContext(Dispatchers.IO) {
+            val inOrderBibleVerse = getInOrderBibleVerseInformation(context, bibleVerseDao)
+
+            val book = inOrderBibleVerse.book
+            val chapter = inOrderBibleVerse.chapter
+            val verse = inOrderBibleVerse.verse
+            val bibleVerses = bibleVerseDao.getBookChapter(book, chapter)
+
+            for (i in verse - 1 until bibleVerses.size) {
+                displayBibleVerses.add(bibleVerses[i])
+
+                if (displayBibleVerses.count() > 4)
+                    break
+            }
+
+            displayBibleVerses.toList()
         }
     }
 }

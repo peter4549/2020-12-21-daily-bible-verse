@@ -12,6 +12,8 @@
 
     <color name="fragment_background">@color/black</color>
 
+    <color name="divider">@color/dim_grey</color>
+
     <color name="icon_enabled">@color/white</color>
     <color name="icon_disabled">@color/dark_gray</color>
     <color name="text_enabled">@color/white</color>

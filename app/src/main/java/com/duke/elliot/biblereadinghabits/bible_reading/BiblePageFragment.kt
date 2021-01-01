@@ -5,21 +5,31 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.base.BaseFragment
+import com.duke.elliot.biblereadinghabits.database.AppDatabase
 import com.duke.elliot.biblereadinghabits.database.BibleVerse
+import com.duke.elliot.biblereadinghabits.database.FavoriteBibleVerseDao
 import com.duke.elliot.biblereadinghabits.databinding.FragmentBiblePageBinding
 import com.duke.elliot.biblereadinghabits.main.MainApplication
-import com.duke.elliot.biblereadinghabits.util.fadeIn
+import com.duke.elliot.biblereadinghabits.util.BibleVerseUtil
 import kotlinx.android.synthetic.main.item_bible_verse_word_only.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 
 class BiblePageFragment: BaseFragment() {
     private lateinit var binding: FragmentBiblePageBinding
     private lateinit var bibleVerses: ArrayList<BibleVerse>
     private lateinit var bibleVerseAdapter: BibleVerseAdapter
     private lateinit var books: Array<String>
+    private lateinit var favoriteBibleVerseDao: FavoriteBibleVerseDao
+
+    private val job = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.Main + job)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,8 +37,8 @@ class BiblePageFragment: BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_bible_page, container, false)
-
         books = requireContext().resources.getStringArray(R.array.books)
+        favoriteBibleVerseDao = AppDatabase.getInstance(requireContext()).favoriteBibleVerseDao()
 
         savedInstanceState?.let { bundle ->
             bundle.getParcelableArrayList<BibleVerse>(KEY_BIBLE_VERSES)?.let {
@@ -76,6 +86,11 @@ class BiblePageFragment: BaseFragment() {
 
             holder.view.word.text = text
             holder.view.word.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize)
+
+            holder.view.setOnLongClickListener {
+                showPopupMenu(it, bibleVerse)
+                true
+            }
         }
 
         override fun getItemCount(): Int = bibleVerses.count()
@@ -92,6 +107,42 @@ class BiblePageFragment: BaseFragment() {
         binding.verseRecyclerView.adapter = bibleVerseAdapter
 
         binding.bookAndChapter.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize + 2)
+    }
+
+    private fun showPopupMenu(view: View, bibleVerse: BibleVerse) {
+        val popupMenu = PopupMenu(requireContext(), view)
+        popupMenu.inflate(R.menu.menu_bible_verse)
+        popupMenu.setOnMenuItemClickListener { item ->
+
+            when (item.itemId) {
+                R.id.addToFavorites -> {
+                    BibleVerseUtil.addToFavorites(
+                        coroutineScope,
+                        favoriteBibleVerseDao,
+                        bibleVerse
+                    )
+                    showToast(getString(R.string.add_to_favorites_success))
+                    true
+                }
+                R.id.copyToClipboard -> {
+                    BibleVerseUtil.copyToClipboard(requireActivity(), bibleVerse.toText())
+                    true
+                }
+                R.id.share -> {
+                    BibleVerseUtil.share(requireActivity(), bibleVerse.toText())
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
+    }
+
+    private fun BibleVerse.toText(): String {
+        val bookString = books[book.dec()]
+        return "$bookString ${chapter}장 ${verse}절 \n" +
+                word
     }
 
     companion object {

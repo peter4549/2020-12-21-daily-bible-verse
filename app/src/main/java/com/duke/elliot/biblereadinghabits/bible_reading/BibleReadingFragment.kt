@@ -17,7 +17,6 @@ import androidx.viewpager2.widget.ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT
 import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.base.BaseFragment
 import com.duke.elliot.biblereadinghabits.bible_reading.bookmark.BibleBookmarkUtil
-import com.duke.elliot.biblereadinghabits.daily_bible_verse.DailyBibleVerseFragmentDirections
 import com.duke.elliot.biblereadinghabits.database.BibleVerse
 import com.duke.elliot.biblereadinghabits.databinding.FragmentBibleReadingBinding
 import com.duke.elliot.biblereadinghabits.main.MainApplication
@@ -118,9 +117,9 @@ class BibleReadingFragment: BaseFragment() {
 
         setToolbarFont(
             binding.toolbar,
-            R.style.NanumMyeonjoBoldTextAppearance
+            R.style.NanumMyeonjoExtraBoldTextAppearance
         )
-        applyPrimaryThemeColor(binding.toolbar)
+        setBackgroundColor(binding.toolbar)
         initViewPager2()
 
         viewModel.currentBook.observe(
@@ -134,6 +133,7 @@ class BibleReadingFragment: BaseFragment() {
                     val groupedBibleVerses = bibleVerses.groupBy { it.chapter }
 
                     val keys = groupedBibleVerses.keys.sorted()
+                    // Dividing into 5.
                     for (key in keys) {
                         val values = groupedBibleVerses[key] ?: continue
                         val sortedValues = values.sortedBy { it.verse }
@@ -146,7 +146,7 @@ class BibleReadingFragment: BaseFragment() {
                         BibleVersesAdapter(requireActivity(), displayBibleVerses)
                     binding.bibleVerseViewPager2.adapter = bibleVersesAdapter
                     binding.bibleVerseViewPager2.post {
-                        binding.bibleVerseViewPager2.setCurrentItem(currentPage, true)
+                        binding.bibleVerseViewPager2.setCurrentItem(currentPage, false)
                     }
 
                     val bookFlipPageTransformer = BookFlipPageTransformer2()
@@ -157,7 +157,7 @@ class BibleReadingFragment: BaseFragment() {
                 }
             })
 
-        setDisplayHomeAsUpEnabled(binding.toolbar, true)
+        setDisplayHomeAsUpEnabled(binding.toolbar)
         setOptionsMenu(binding.toolbar, R.menu.menu_bible_reading)
         setOnHomePressedCallback {
             findNavController().popBackStack()

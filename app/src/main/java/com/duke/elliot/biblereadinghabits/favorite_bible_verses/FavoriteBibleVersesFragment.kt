@@ -1,14 +1,16 @@
 package com.duke.elliot.biblereadinghabits.favorite_bible_verses
 
-import android.database.DatabaseUtils
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,12 +19,20 @@ import com.duke.elliot.biblereadinghabits.base.BaseFragment
 import com.duke.elliot.biblereadinghabits.database.FavoriteBibleVerse
 import com.duke.elliot.biblereadinghabits.databinding.FragmentFavoriteBibleVersesBinding
 import com.duke.elliot.biblereadinghabits.databinding.ItemBibleVerseBinding
+import com.duke.elliot.biblereadinghabits.main.MainApplication
+import com.duke.elliot.biblereadinghabits.util.BibleVerseUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 
 class FavoriteBibleVersesFragment: BaseFragment() {
 
     private lateinit var binding: FragmentFavoriteBibleVersesBinding
     private lateinit var viewModel: FavoriteBibleVersesViewModel
     private lateinit var recyclerViewAdapter: FavoriteBibleVerseAdapter
+
+    private val job = Job()
+    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,9 +43,14 @@ class FavoriteBibleVersesFragment: BaseFragment() {
 
         setToolbarFont(
             binding.toolbar,
-            R.style.NanumMyeonjoBoldTextAppearance
+            R.style.NanumMyeonjoExtraBoldTextAppearance
         )
-        applyPrimaryThemeColor(binding.toolbar)
+        setBackgroundColor(binding.toolbar)
+
+        setDisplayHomeAsUpEnabled(binding.toolbar)
+        setOnHomePressedCallback {
+            findNavController().popBackStack()
+        }
 
         val viewModelFactory = FavoriteBibleVersesViewModelFactory(requireActivity().application)
         viewModel = ViewModelProvider(viewModelStore, viewModelFactory)[FavoriteBibleVersesViewModel::class.java]
@@ -51,8 +66,10 @@ class FavoriteBibleVersesFragment: BaseFragment() {
                     binding.favoriteBibleVerseRecyclerView.scheduleLayoutAnimation()
                     recyclerViewAdapter.submitList(favoriteBibleVerses)
                 }
-            } else
+            } else {
                 binding.emptyMessage.visibility = View.VISIBLE
+                binding.favoriteBibleVerseRecyclerView.visibility = View.GONE
+            }
         })
 
         return binding.root
@@ -72,6 +89,14 @@ class FavoriteBibleVersesFragment: BaseFragment() {
 
                 binding.bibleVerseInformation.text = bibleVerseInformation
                 binding.bibleVerseWord.text = word
+
+                binding.bibleVerseInformation.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize + 2)
+                binding.bibleVerseWord.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize )
+
+                binding.bibleVerseContainer.setOnLongClickListener {
+                    showPopupMenu(it, favoriteBibleVerse)
+                    true
+                }
             }
         }
 
@@ -91,6 +116,42 @@ class FavoriteBibleVersesFragment: BaseFragment() {
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
             val favoriteBibleVerse = getItem(position)
             (holder as ViewHolder).bind(holder.binding as ItemBibleVerseBinding, favoriteBibleVerse)
+        }
+
+        private fun showPopupMenu(view: View, favoriteBibleVerse: FavoriteBibleVerse) {
+            val popupMenu = PopupMenu(requireContext(), view)
+            popupMenu.inflate(R.menu.menu_favorite_bible_verse)
+            popupMenu.setOnMenuItemClickListener { item ->
+
+                when (item.itemId) {
+                    R.id.copyToClipboard -> {
+                        BibleVerseUtil.copyToClipboard(requireActivity(), favoriteBibleVerse.toText())
+                        true
+                    }
+                    R.id.share -> {
+                        BibleVerseUtil.share(requireActivity(), favoriteBibleVerse.toText())
+                        true
+                    }
+                    R.id.deleteFromFavorites -> {
+                        BibleVerseUtil.deleteFromFavorites(
+                            coroutineScope,
+                            viewModel.favoriteBibleVerseDao,
+                            favoriteBibleVerse
+                        )
+                        showToast(getString(R.string.delete_from_favorites_success))
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            popupMenu.show()
+        }
+
+        private fun FavoriteBibleVerse.toText(): String {
+            val bookString = viewModel.getBook(book)
+            return "$bookString ${chapter}장 ${verse}절 \n" +
+                    word
         }
     }
 }

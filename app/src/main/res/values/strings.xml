@@ -10,6 +10,7 @@
     </string>
 
     <!-- Options Menu -->
+    <string name="search">검색</string>
     <string name="settings">설정</string>
     <string name="favorite">즐겨찾기</string>
 
@@ -27,13 +28,27 @@
     <string name="select_in_order_title">순서대로 선택</string>
     <string name="select_in_order_description">전체 성경 구절에서 순서대로 선택합니다.</string>
     <string name="share">공유</string>
-    <string name="font_size_and_theme_color">글꼴 크기 및 테마 색상</string>
+    <string name="font_size_and_theme">글꼴 크기 및 테마</string>
     <string name="font_size">글꼴 크기</string>
     <string name="theme_color">테마 색상</string>
+    <string name="night_mode">야간 모드</string>
+    <string name="dark_theme">어두운 테마</string>
+    <string name="light_theme">밝은 테마</string>
+    <string name="system_default_theme">시스템 기본 테마</string>
+    <string name="etc">기타</string>
+    <string name="share_the_app">앱 공유</string>
+    <string name="open_source_licenses">오픈소스 라이선스</string>
+    <string name="version">버전</string>
+    <string name="donation">후원</string>
+    <string name="using_the_latest_version">최신 버전 사용 중</string>
+    <string name="latest_version">최신 버전</string>
 
     <!-- Context Menu -->
     <string name="add_to_favorites">즐겨찾기 추가</string>
-    <string name="copy_to_clipboard">클랍보드 복사</string>
+    <string name="add_to_favorites_success">즐겨찾기에 추가되었습니다.</string>
+    <string name="delete_from_favorites">즐켜찾기에서 제거</string>
+    <string name="delete_from_favorites_success">즐겨찾기에서 제거되었습니다.</string>
+    <string name="copy_to_clipboard">클립보드 복사</string>
 
     <!-- Clipboard -->
     <string name="copy_to_clipboard_success">클립보드에 복사되었습니다.</string>
@@ -50,4 +65,18 @@
     <string name="show_bookmarks">책갈피 보기</string>
     <string name="delete_bookmark">책갈피 삭제</string>
     <string name="bookmarks_empty_message">책갈피가 비었습니다.</string>
+
+    <!-- Search -->
+    <string name="search_bible_verse">성경 구절 검색</string>
+
+    <!-- Bible Reading -->
+    <string name="bible_reading">성경 읽기</string>
+
+    <!-- Version Update -->
+    <string name="update">업데이트</string>
+    <string name="update_request_title">애플리케이션 업데이트</string>
+    <string name="update_request_message">애플리케이션을 최신 버전으로 업데이트 합니다.</string>
+
+    <!-- Donate -->
+    <string name="donate_message">후원 1000원</string>
 </resources>

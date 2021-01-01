@@ -21,6 +21,13 @@
             app:exitAnim="@anim/anim_slide_out_left"
             app:popEnterAnim="@anim/anim_slide_in_left"
             app:popExitAnim="@anim/anim_slide_out_right" />
+        <action
+            android:id="@+id/action_dailyBibleVerseFragment_to_searchFragment"
+            app:destination="@id/searchFragment"
+            app:enterAnim="@anim/anim_slide_in_bottom"
+            app:exitAnim="@anim/anim_slide_out_top"
+            app:popEnterAnim="@anim/anim_slide_in_top"
+            app:popExitAnim="@anim/anim_slide_out_bottom" />
     </fragment>
     <fragment
         android:id="@+id/bibleReadingFragment"
@@ -35,4 +42,8 @@
         android:id="@+id/favoriteBibleVersesFragment"
         android:name="com.duke.elliot.biblereadinghabits.favorite_bible_verses.FavoriteBibleVersesFragment"
         android:label="FavoriteBibleVersesFragment" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.duke.elliot.biblereadinghabits.search.SearchFragment"
+        android:label="SearchFragment" />
 </navigation>

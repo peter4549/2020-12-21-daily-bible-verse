@@ -1,7 +1,6 @@
 package com.duke.elliot.biblereadinghabits.daily_bible_verse
 
-import android.app.AlertDialog
-import android.content.DialogInterface
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.TypedValue
@@ -10,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
@@ -19,9 +20,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.base.BaseFragment
 import com.duke.elliot.biblereadinghabits.bible_reading.bookmark.BibleBookmarkUtil
+import com.duke.elliot.biblereadinghabits.billing.BillingActivity
 import com.duke.elliot.biblereadinghabits.daily_bible_verse.DailyBibleVerseUtil.IN_ORDER
 import com.duke.elliot.biblereadinghabits.daily_bible_verse.DailyBibleVerseUtil.MY_BIBLE_VERSES
 import com.duke.elliot.biblereadinghabits.daily_bible_verse.DailyBibleVerseUtil.POPULAR_BIBLE_VERSES
@@ -31,8 +34,12 @@ import com.duke.elliot.biblereadinghabits.database.BibleVerse
 import com.duke.elliot.biblereadinghabits.databinding.FragmentDailyBibleVerseDrawerBinding
 import com.duke.elliot.biblereadinghabits.databinding.ItemBibleVerseBinding
 import com.duke.elliot.biblereadinghabits.main.MainApplication
+import com.duke.elliot.biblereadinghabits.splash.SplashActivity
 import com.duke.elliot.biblereadinghabits.util.BibleVerseUtil
-import com.duke.elliot.biblereadinghabits.util.setAlphaValue
+import com.duke.elliot.biblereadinghabits.util.ThemeUtil.restoreNightMode
+import com.duke.elliot.biblereadinghabits.util.getVersionName
+import com.duke.elliot.biblereadinghabits.util.goToPlayStore
+import com.duke.elliot.biblereadinghabits.util.shareApplication
 import com.flyco.dialog.widget.NormalListDialog
 import com.mancj.slideup.SlideUp
 import com.mancj.slideup.SlideUpBuilder
@@ -44,6 +51,7 @@ import kotlinx.coroutines.*
 const val DAILY_BIBLE_VERSE_DRAWER_MENU_ITEM_ID = 2104L
 const val FONT_SIZE_DRAWER_MENU_ITEM_ID = 2105L
 const val THEME_COLOR_DRAWER_MENU_ITEM_ID = 2106L
+const val THEME_NIGHT_MODE_DRAWER_MENU_ITEM_ID = 2107L
 
 class DailyBibleVerseFragment: BaseFragment() {
 
@@ -69,14 +77,18 @@ class DailyBibleVerseFragment: BaseFragment() {
             false
         )
 
+        val viewModelFactory = DailyBibleVerseViewModelFactory(requireActivity().application)
+        viewModel = ViewModelProvider(viewModelStore, viewModelFactory)[DailyBibleVerseViewModel::class.java]
+
+        setColor()
+
         setToolbarFont(
             binding.fragmentDailyBibleVerse.toolbar,
-            R.style.NanumMyeonjoBoldTextAppearance
+            R.style.NanumMyeonjoExtraBoldTextAppearance
         )
         initBookmark()
         initDrawer()
         initOnScrollListener()
-
         setOptionsMenu(
             binding.fragmentDailyBibleVerse.toolbar,
             R.menu.menu_daily_bible_verse_fragment
@@ -103,20 +115,15 @@ class DailyBibleVerseFragment: BaseFragment() {
                         .actionDailyBibleVerseFragmentToFavoriteBibleVersesFragment()
                 )
             },
-            R.id.settings to {
-                showToast("Setting selected.")
+            R.id.search to {
+                findNavController().navigate(
+                    DailyBibleVerseFragmentDirections
+                        .actionDailyBibleVerseFragmentToSearchFragment()
+                )
             }
         )
 
-        val viewModelFactory = DailyBibleVerseViewModelFactory(requireActivity().application)
-        viewModel = ViewModelProvider(viewModelStore, viewModelFactory)[DailyBibleVerseViewModel::class.java]
-
-        when (DailyBibleVerseUtil.getRange(requireContext())) {
-            POPULAR_BIBLE_VERSES -> setDisplayBibleVerses(viewModel.getDisplayPopularBibleVerses())
-            MY_BIBLE_VERSES -> setDisplayBibleVerses(viewModel.getDisplayFavoriteBibleVerses())
-            IN_ORDER -> setDisplayBibleVerses(viewModel.getDisplayInOrderBibleVerses())
-            RANDOM -> setDisplayBibleVerses(viewModel.getDisplayRandomBibleVerses())
-        }
+        setDisplayBibleVerses(viewModel.displayDailyBibleVerses)
 
         binding.fragmentDailyBibleVerse.readBible.setOnClickListener {
             findNavController().navigate(
@@ -126,11 +133,6 @@ class DailyBibleVerseFragment: BaseFragment() {
         }
 
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-        setColor()
     }
 
     private fun initDrawer() {
@@ -155,8 +157,38 @@ class DailyBibleVerseFragment: BaseFragment() {
             else -> throw IllegalArgumentException("Invalid range.")
         }
 
+        val iconColor = ContextCompat.getColor(requireContext(), R.color.color_icon)
+
+        /** Version */
+        val currentVersion = getVersionName(requireContext())
+        val versionText = if (currentVersion == SplashActivity.latestVersionName) {
+            currentVersion + " ${getString(R.string.using_the_latest_version)}"
+        } else
+            currentVersion + " ${getString(R.string.latest_version)}: ${SplashActivity.latestVersionName}"
+
         drawerMenuItemAdapter = DrawerMenuItemAdapter(
             arrayListOf(
+                DrawerMenuItem(
+                    0L,
+                    DRAWER_MENU_ITEM_SUBTITLE,
+                    title = getString(R.string.favorite)
+                ),
+                DrawerMenuItem(
+                    0L,
+                    DRAWER_MENU_ITEM_CONTENT,
+                    title = getString(R.string.favorite),
+                    iconResourceId = R.drawable.ic_round_star_24,
+                    iconColor = iconColor
+                ) {
+                    if (binding.drawerLayout.isDrawerOpen(GravityCompat.START))
+                        binding.drawerLayout.closeDrawer(GravityCompat.START)
+
+                    findNavController().navigate(
+                        DailyBibleVerseFragmentDirections
+                            .actionDailyBibleVerseFragmentToFavoriteBibleVersesFragment()
+                    )
+                },
+                DrawerMenuItem(0L, DRAWER_MENU_ITEM_DIVIDER),
                 DrawerMenuItem(
                     0L,
                     DRAWER_MENU_ITEM_SUBTITLE,
@@ -167,18 +199,16 @@ class DailyBibleVerseFragment: BaseFragment() {
                     DRAWER_MENU_ITEM_CONTENT,
                     title = title,
                     description = description,
-                    iconResourceId = R.drawable.ic_cross_48px
+                    iconResourceId = R.drawable.ic_holy_bible_50px,
+                    iconColor = iconColor
                 ) {
                     showRangeSelectDialog()
                 },
+                DrawerMenuItem(0L, DRAWER_MENU_ITEM_DIVIDER),
                 DrawerMenuItem(
-                    1L,
-                    DRAWER_MENU_ITEM_DIVIDER
-                ),
-                DrawerMenuItem(
-                    2L,
+                    0L,
                     DRAWER_MENU_ITEM_SUBTITLE,
-                    title = getString(R.string.font_size_and_theme_color)
+                    title = getString(R.string.font_size_and_theme)
                 ),
                 /** Font Size and Theme Color */
                 DrawerMenuItem(
@@ -186,18 +216,25 @@ class DailyBibleVerseFragment: BaseFragment() {
                     DRAWER_MENU_ITEM_CONTENT,
                     title = getString(R.string.font_size),
                     description = MainApplication.fontSize.toInt().toString(),
-                    iconResourceId = R.drawable.ic_baseline_text_fields_24
+                    iconResourceId = R.drawable.ic_baseline_text_fields_24,
+                    iconColor = iconColor
                 ) {
-                  DrawerMenuUtil.showFontSizePicker(requireContext()) { fontSize ->
-                      val item = drawerMenuItemAdapter.getItemById(FONT_SIZE_DRAWER_MENU_ITEM_ID)
-                      item?.let {
-                          it.description = fontSize.toInt().toString()
-                          drawerMenuItemAdapter.update(it)
-                      }
-                      dailyBibleVerseRecyclerView.adapter?.notifyDataSetChanged()
-                      binding.fragmentDailyBibleVerse.dailyBibleVerseWord.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize + 2F)
-                      binding.fragmentDailyBibleVerse.dailyBibleVerseInformation.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize)
-                  }
+                    DrawerMenuUtil.showFontSizePicker(requireContext()) { fontSize ->
+                        val item = drawerMenuItemAdapter.getItemById(FONT_SIZE_DRAWER_MENU_ITEM_ID)
+                        item?.let {
+                            it.description = fontSize.toInt().toString()
+                            drawerMenuItemAdapter.update(it)
+                        }
+                        dailyBibleVerseRecyclerView.adapter?.notifyDataSetChanged()
+                        binding.fragmentDailyBibleVerse.dailyBibleVerseWord.setTextSize(
+                            TypedValue.COMPLEX_UNIT_SP,
+                            MainApplication.fontSize + 2F
+                        )
+                        binding.fragmentDailyBibleVerse.dailyBibleVerseInformation.setTextSize(
+                            TypedValue.COMPLEX_UNIT_SP,
+                            MainApplication.fontSize
+                        )
+                    }
                 },
                 DrawerMenuItem(
                     THEME_COLOR_DRAWER_MENU_ITEM_ID,
@@ -207,14 +244,85 @@ class DailyBibleVerseFragment: BaseFragment() {
                     iconColor = MainApplication.primaryThemeColor
                 ) {
                     DrawerMenuUtil.showColorPicker(requireActivity()) { color ->
-                        val item = drawerMenuItemAdapter.getItemById(THEME_COLOR_DRAWER_MENU_ITEM_ID)
+                        val item =
+                            drawerMenuItemAdapter.getItemById(THEME_COLOR_DRAWER_MENU_ITEM_ID)
                         item?.let {
                             it.iconColor = color
                             drawerMenuItemAdapter.update(it)
                             setColor()
                         }
                     }
+                },
+                DrawerMenuItem(
+                    THEME_NIGHT_MODE_DRAWER_MENU_ITEM_ID,
+                    DRAWER_MENU_ITEM_CONTENT,
+                    title = getString(R.string.night_mode),
+                    description = when (restoreNightMode(requireContext())) {
+                        MODE_NIGHT_YES -> getString(R.string.dark_theme)
+                        MODE_NIGHT_NO -> getString(R.string.light_theme)
+                        MODE_NIGHT_FOLLOW_SYSTEM -> getString(R.string.system_default_theme)
+                        else -> throw IllegalArgumentException("Invalid night mode.")
+                    },
+                    iconResourceId = R.drawable.ic_day_and_night_60px,
+                    iconColor = iconColor
+                ) {
+                    DrawerMenuUtil.showNightModePicker(requireContext()) { nightMode, nightModeString ->
+                        val item = drawerMenuItemAdapter.getItemById(
+                            THEME_NIGHT_MODE_DRAWER_MENU_ITEM_ID
+                        )
+                        item?.let {
+                            setDefaultNightMode(nightMode)
+                            it.description = nightModeString
+                            drawerMenuItemAdapter.update(it)
+                        }
+                    }
+                },
+                DrawerMenuItem(0, DRAWER_MENU_ITEM_DIVIDER),
+                DrawerMenuItem(
+                    0L,
+                    DRAWER_MENU_ITEM_SUBTITLE,
+                    title = getString(R.string.etc)
+                ),
+                DrawerMenuItem(
+                    0L,
+                    DRAWER_MENU_ITEM_CONTENT,
+                    title = getString(R.string.share_the_app),
+                    iconResourceId = R.drawable.ic_baseline_share_24,
+                    iconColor = iconColor
+                ) {
+                    shareApplication(requireContext())
+                },
+                DrawerMenuItem(
+                    0L,
+                    DRAWER_MENU_ITEM_CONTENT,
+                    title = getString(R.string.donation),
+                    iconResourceId = R.drawable.ic_donation_50px,
+                    iconColor = iconColor
+                ) {
+                    startActivity(Intent(requireActivity(), BillingActivity::class.java))
+                },
+                DrawerMenuItem(
+                    0L,
+                    DRAWER_MENU_ITEM_CONTENT,
+                    title = getString(R.string.version),
+                    description = versionText,
+                    iconResourceId = R.drawable.ic_versions_48px,
+                    iconColor = iconColor
+                ) {
+                    if (currentVersion != SplashActivity.latestVersionName)
+                        showUpdateRequestDialog()
                 }
+                /** Future Work
+                DrawerMenuItem(
+                0L,
+                DRAWER_MENU_ITEM_CONTENT,
+                title = getString(R.string.open_source_licenses),
+                iconResourceId = R.drawable.ic_open_source_50px,
+                iconColor = iconColor
+                ) {
+
+                }
+                 */
             )
         )
         binding.layoutNavigationDrawer.drawerRecyclerView.adapter = drawerMenuItemAdapter
@@ -280,9 +388,9 @@ class DailyBibleVerseFragment: BaseFragment() {
         val bookmarks = BibleBookmarkUtil.getBookmarks(requireContext())
         slideUp = SlideUpBuilder(binding.fragmentDailyBibleVerse.bookmarkContainer)
             .withListeners(object : SlideUp.Listener.Events {
-                override fun onSlide(percent: Float) {  }
+                override fun onSlide(percent: Float) {}
 
-                override fun onVisibilityChanged(visibility: Int) {  }
+                override fun onVisibilityChanged(visibility: Int) {}
             })
             .withStartGravity(Gravity.BOTTOM)
             .withLoggingEnabled(true)
@@ -329,8 +437,14 @@ class DailyBibleVerseFragment: BaseFragment() {
         binding.fragmentDailyBibleVerse.dailyBibleVerseWord.text = bibleVerse.word
         binding.fragmentDailyBibleVerse.dailyBibleVerseInformation.text = bibleVerseInformation
 
-        binding.fragmentDailyBibleVerse.dailyBibleVerseWord.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize + 2F)
-        binding.fragmentDailyBibleVerse.dailyBibleVerseInformation.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize)
+        binding.fragmentDailyBibleVerse.dailyBibleVerseWord.setTextSize(
+            TypedValue.COMPLEX_UNIT_SP,
+            MainApplication.fontSize + 2F
+        )
+        binding.fragmentDailyBibleVerse.dailyBibleVerseInformation.setTextSize(
+            TypedValue.COMPLEX_UNIT_SP,
+            MainApplication.fontSize
+        )
 
         val dailyBibleVerseAdapter = DailyBibleVerseAdapter()
         binding.fragmentDailyBibleVerse.dailyBibleVerseRecyclerView.adapter =
@@ -340,10 +454,15 @@ class DailyBibleVerseFragment: BaseFragment() {
 
         /** Context Menu */
         registerForContextMenu(binding.fragmentDailyBibleVerse.dailyBibleVerseRecyclerView)
+
+        /** More */
+        binding.fragmentDailyBibleVerse.more.setOnClickListener {
+            showPopupMenu(it, bibleVerse)
+        }
     }
 
     private fun setColor() {
-        applyPrimaryThemeColor(binding.fragmentDailyBibleVerse.toolbar)
+        setBackgroundColor(binding.fragmentDailyBibleVerse.toolbar)
         binding.fragmentDailyBibleVerse.readBible.backgroundTintList = ColorStateList.valueOf(
             MainApplication.primaryThemeColor
         )
@@ -351,6 +470,8 @@ class DailyBibleVerseFragment: BaseFragment() {
 
         binding.fragmentDailyBibleVerse.readBible.invalidate()
         binding.fragmentDailyBibleVerse.bookmark.invalidate()
+
+        requireActivity().window.statusBarColor = MainApplication.primaryThemeColor
     }
 
     private fun showRangeSelectDialog() {
@@ -368,45 +489,26 @@ class DailyBibleVerseFragment: BaseFragment() {
             getString(R.string.select_in_order_description)
         )
 
-        val originalDrawerMenuItem = drawerMenuItemAdapter.getItemById(
-            DAILY_BIBLE_VERSE_DRAWER_MENU_ITEM_ID
-        )
-        val originalRange = DailyBibleVerseUtil.getRange(requireContext())
-        val originalTitle = originalDrawerMenuItem?.title ?: getString(R.string.select_from_popular_bible_verses_title)
-        val originalDescription = originalDrawerMenuItem?.description ?: getString(R.string.select_from_popular_bible_verses_description)
-
-        AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.select_range))
-            .setSingleChoiceItems(
-                titles, 0
-            ) { _, which ->
-                /** POPULAR_BIBLE_VERSES = 0
-                 * MY_BIBLE_VERSES = 1
-                 * RANDOM = 2
-                 * IN_ORDER = 3
-                 */
-                DailyBibleVerseUtil.setRange(requireContext(), which)
-                val item = drawerMenuItemAdapter.getItemById(DAILY_BIBLE_VERSE_DRAWER_MENU_ITEM_ID)
-                item?.let {
-                    it.title = titles[which]
-                    it.description = descriptionArray[which]
-                    drawerMenuItemAdapter.update(it)
-                }
+        val normalListDialog =
+            NormalListDialog(requireContext(), titles)
+        normalListDialog.title(getString(R.string.select_range))
+        normalListDialog.titleBgColor(MainApplication.primaryThemeColor)
+        normalListDialog.setOnOperItemClickL { _, _, position, _ ->
+            /** POPULAR_BIBLE_VERSES = 0
+             * MY_BIBLE_VERSES = 1
+             * RANDOM = 2
+             * IN_ORDER = 3
+             */
+            DailyBibleVerseUtil.setRange(requireContext(), position)
+            val item = drawerMenuItemAdapter.getItemById(DAILY_BIBLE_VERSE_DRAWER_MENU_ITEM_ID)
+            item?.let {
+                it.title = titles[position]
+                it.description = descriptionArray[position]
+                drawerMenuItemAdapter.update(it)
             }
-            .setNegativeButton(getString(R.string.cancel)) { dialogInterface: DialogInterface, _: Int ->
-                DailyBibleVerseUtil.setRange(requireContext(), originalRange)
-                val item = drawerMenuItemAdapter.getItemById(DAILY_BIBLE_VERSE_DRAWER_MENU_ITEM_ID)
-                item?.let {
-                    it.title = originalTitle
-                    it.description = originalDescription
-                    drawerMenuItemAdapter.update(it)
-                }
-                dialogInterface.cancel()
-            }
-            .setPositiveButton(getString(R.string.ok)) { dialogInterface: DialogInterface, _: Int ->
-                dialogInterface.dismiss()
-            }
-            .show()
+            normalListDialog.dismiss()
+        }
+        normalListDialog.show()
     }
 
     inner class DailyBibleVerseAdapter:
@@ -423,8 +525,14 @@ class DailyBibleVerseFragment: BaseFragment() {
 
                 binding.bibleVerseInformation.text = bibleVerseInformation
                 binding.bibleVerseWord.text = word
-                binding.bibleVerseInformation.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize + 2F)
-                binding.bibleVerseWord.setTextSize(TypedValue.COMPLEX_UNIT_SP, MainApplication.fontSize)
+                binding.bibleVerseInformation.setTextSize(
+                    TypedValue.COMPLEX_UNIT_SP,
+                    MainApplication.fontSize + 2F
+                )
+                binding.bibleVerseWord.setTextSize(
+                    TypedValue.COMPLEX_UNIT_SP,
+                    MainApplication.fontSize
+                )
 
                 binding.bibleVerseContainer.setOnLongClickListener {
                     showPopupMenu(it, bibleVerse)
@@ -450,41 +558,55 @@ class DailyBibleVerseFragment: BaseFragment() {
             val bibleVerse = getItem(position)
             (holder as ViewHolder).bind(holder.binding as ItemBibleVerseBinding, bibleVerse)
         }
-
-        private fun showPopupMenu(view: View, bibleVerse: BibleVerse) {
-            val popupMenu = PopupMenu(requireContext(), view)
-            popupMenu.inflate(R.menu.menu_bible_verse)
-            popupMenu.setOnMenuItemClickListener { item ->
-
-                when (item.itemId) {
-                    R.id.addToFavorites -> {
-                        BibleVerseUtil.addToFavorites(
-                            coroutineScope,
-                            viewModel.favoriteBibleVerseDao,
-                            bibleVerse
-                        )
-                        true
-                    }
-                    R.id.copyToClipboard -> {
-                        BibleVerseUtil.copyToClipboard(requireActivity(), bibleVerse.toText())
-                        true
-                    }
-                    R.id.share -> {
-                        BibleVerseUtil.share(requireActivity(), bibleVerse.toText())
-                        true
-                    }
-                    else -> false
-                }
-            }
-
-            popupMenu.show()
-        }
     }
 
-    fun BibleVerse.toText(): String {
+    private fun showPopupMenu(view: View, bibleVerse: BibleVerse) {
+        val popupMenu = PopupMenu(requireContext(), view)
+        popupMenu.inflate(R.menu.menu_bible_verse)
+        popupMenu.setOnMenuItemClickListener { item ->
+
+            when (item.itemId) {
+                R.id.addToFavorites -> {
+                    BibleVerseUtil.addToFavorites(
+                        coroutineScope,
+                        viewModel.favoriteBibleVerseDao,
+                        bibleVerse
+                    )
+                    showToast(getString(R.string.add_to_favorites_success))
+                    true
+                }
+                R.id.copyToClipboard -> {
+                    BibleVerseUtil.copyToClipboard(requireActivity(), bibleVerse.toText())
+                    true
+                }
+                R.id.share -> {
+                    BibleVerseUtil.share(requireActivity(), bibleVerse.toText())
+                    true
+                }
+                else -> false
+            }
+        }
+
+        popupMenu.show()
+    }
+
+    private fun BibleVerse.toText(): String {
         val bookString = viewModel.getBook(book)
         return "$bookString ${chapter}장 ${verse}절 \n" +
                 word
+    }
+
+    private fun showUpdateRequestDialog() {
+        SweetAlertDialog(requireContext(), SweetAlertDialog.CUSTOM_IMAGE_TYPE)
+            .setTitleText(getString(R.string.update_request_title))
+            .setContentText(getString(R.string.update_request_message))
+            .setConfirmText(getString(R.string.update))
+            .setCustomImage(R.drawable.ic_holy_bible_100px)
+            .setConfirmClickListener { sDialog ->
+                goToPlayStore(requireContext())
+                sDialog.dismissWithAnimation()
+            }
+            .show()
     }
 
     class BibleVerseDiffCallback: DiffUtil.ItemCallback<BibleVerse>() {
@@ -505,6 +627,3 @@ class DailyBibleVerseFragment: BaseFragment() {
         }
     }
 }
-
-
-

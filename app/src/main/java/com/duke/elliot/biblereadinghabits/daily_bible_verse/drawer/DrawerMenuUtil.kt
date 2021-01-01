@@ -4,12 +4,15 @@ import android.app.Activity
 import android.content.Context
 import android.widget.TextView
 import androidx.annotation.ColorInt
+import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.core.content.ContextCompat
 import com.duke.elliot.biblereadinghabits.R
 import com.duke.elliot.biblereadinghabits.main.MainApplication
+import com.duke.elliot.biblereadinghabits.util.ThemeUtil.storeNightMode
 import com.flyco.dialog.widget.NormalListDialog
 import kotlinx.android.synthetic.main.item_menu_content.*
 import petrov.kristiyan.colorpicker.ColorPicker
+import java.lang.IllegalArgumentException
 
 
 const val PREFERENCES_THEME = "com.duke.elliot.biblereadinghabits.daily_bible_verse.drawer" +
@@ -96,6 +99,36 @@ object DrawerMenuUtil {
     fun restoreFontSize(context: Context): Float {
         val preferences = context.getSharedPreferences(PREFERENCES_THEME, Context.MODE_PRIVATE)
         return preferences.getFloat(KEY_FONT_SIZE, DEFAULT_FONT_SIZE)
+    }
+
+    /** Night Mode */
+    fun showNightModePicker(
+        context: Context,
+        selectNightModeCallback: (nightMode: Int, nightModeString: String) -> Unit
+    ) {
+        val themes = arrayOf(
+            context.getString(R.string.dark_theme),
+            context.getString(R.string.light_theme),
+            context.getString(R.string.system_default_theme)
+        )
+
+        val normalListDialog = NormalListDialog(context, themes)
+        normalListDialog.title(context.getString(R.string.night_mode))
+        normalListDialog.titleBgColor(MainApplication.primaryThemeColor)
+        normalListDialog.setOnOperItemClickL { _, _, position, _ ->
+            val nightMode = when(position) {
+                0 -> MODE_NIGHT_YES
+                1 -> MODE_NIGHT_NO
+                2 -> MODE_NIGHT_FOLLOW_SYSTEM
+                else -> throw IllegalArgumentException("Invalid night mode.")
+            }
+            val nightModeString = themes[position]
+
+            storeNightMode(context, nightMode)
+            selectNightModeCallback.invoke(nightMode, nightModeString)
+            normalListDialog.dismiss()
+        }
+        normalListDialog.show()
     }
 }
 

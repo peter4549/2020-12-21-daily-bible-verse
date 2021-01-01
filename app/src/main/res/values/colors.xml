@@ -9,13 +9,15 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gold">#FFD700</color>
     <color name="dark_gray">#A9A9A9</color>
+    <color name="dim_grey">#696969</color>
     <color name="silver">#C0C0C0</color>
+    <color name="wood_brown">#C19A6B</color>
 
     <color name="default_primary_theme">@color/colorLightBlue400</color>
 
     <color name="fragment_background">@color/white</color>
 
-    <color name="icon_enabled">@color/black</color>
+    <color name="icon_enabled">@color/dim_grey</color>
     <color name="icon_disabled">@color/dark_gray</color>
     <color name="text_enabled">@color/black</color>
     <color name="text_disabled">@color/dark_gray</color>
@@ -23,6 +25,8 @@
     <color name="toolbar_title">@color/white</color>
 
     <color name="divider">@color/silver</color>
+
+    <color name="app_widget_background">#80F0F0F0</color>
 
     <!-- Default Colors 400 -->
     <color name="colorRed400">#ef5350</color>

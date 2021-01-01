@@ -13,6 +13,7 @@ import com.duke.elliot.biblereadinghabits.database.FavoriteBibleVerseDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.lang.Exception
 
@@ -63,6 +64,15 @@ object BibleVerseUtil {
             )
 
             favoriteBibleVerseDao.insert(favoriteBibleVerse)
+
+        }
+    }
+
+    fun deleteFromFavorites(coroutineScope: CoroutineScope,
+                            favoriteBibleVerseDao: FavoriteBibleVerseDao,
+                            favoriteBibleVerse: FavoriteBibleVerse) {
+        coroutineScope.launch(Dispatchers.IO) {
+            favoriteBibleVerseDao.delete(favoriteBibleVerse)
         }
     }
 }

@@ -2,8 +2,8 @@
     <!-- Base application theme. -->
     <style name="Theme.BibleReadingHabits" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorPrimary">@color/wood_brown</item>
+        <item name="colorPrimaryVariant">@color/white</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
@@ -21,9 +21,11 @@
         <item name="android:textColorPrimary">@color/toolbar_title</item>
         <item name="android:textColorSecondary">@color/toolbar_title</item>
         <item name="android:textColor">@color/color_text</item>
+        <item name="android:colorPrimary">@color/default_primary_theme</item>
+        <item name="android:colorPrimaryDark">@color/default_primary_theme</item>
     </style>
 
-    <style name="NanumMyeonjoBoldTextAppearance">
-        <item name="android:fontFamily">@font/nanum_myeongjo_bold</item>
+    <style name="NanumMyeonjoExtraBoldTextAppearance">
+        <item name="android:fontFamily">@font/nanum_myeongjo_extra_bold</item>
     </style>
 </resources>
